@@ -11,7 +11,7 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: NoteRepository::class)]
-class Note
+class Note implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -36,8 +36,8 @@ class Note
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeInterface $createdAt;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private \DateTimeInterface $updatedAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deletedAt = null;
@@ -50,6 +50,7 @@ class Note
         $this->priority = $priority;
         $this->color = $color;
         $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -129,26 +130,41 @@ class Note
         return $this;
     }
 
+    public function getDeletedAt(): \DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'uid' => $this->uid->toRfc4122(),
+            'title' => $this->title,
+            'content' => $this->content,
+            'priority' => $this->priority?->value,
+            'color' => $this->color?->value,
+            'createdAt' => $this->createdAt?->format(DATE_ATOM),
+            'updatedAt' => $this->updatedAt?->format(DATE_ATOM),
+            'deletedAt' => $this->deletedAt?->format(DATE_ATOM),
+        ];
+    }
+
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTime $updatedAt): static
+    public function setUpdatedAt(\DateTime $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getDeletedAt(): ?\DateTime
-    {
-        return $this->deletedAt;
-    }
-
-    public function setDeletedAt(?\DateTime $deletedAt): static
-    {
-        $this->deletedAt = $deletedAt;
 
         return $this;
     }

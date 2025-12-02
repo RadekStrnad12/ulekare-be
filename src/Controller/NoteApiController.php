@@ -78,7 +78,7 @@ class NoteApiController extends AbstractController
         return $this->api->ok($responseData, 201);
     }
 
-    #[Route(path: '/{uid}', name: 'update', methods: ['PUT'])]
+    #[Route(path: '/{uid}', name: 'update', methods: ['PUT', 'PATCH'])]
     public function updateNote(string $uid, Request $request): JsonResponse
     {
         if (!Uuid::isValid($uid)) {

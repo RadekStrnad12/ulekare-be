@@ -43,6 +43,13 @@ final readonly class ApiResponseFactory
         $response = new JsonResponse($payload, $status);
         $response->headers->set('Content-Type', 'application/json');
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        // Minimal CORS headers for test project (no env/config needed)
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        $response->headers->set('Access-Control-Max-Age', '86400');
+
         return $response;
     }
 }

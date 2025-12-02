@@ -2,6 +2,10 @@
 framework:
     secret: '%env(APP_SECRET)%'
 
+    # Enable Symfony Serializer for normalizing entities
+    serializer:
+        enabled: true
+
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
